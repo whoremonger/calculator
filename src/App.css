@@ -18,11 +18,14 @@
   font-size: 18pt;
   border-radius: 1px 1px;
 }
+.row {
+  grid-column: 1 / -1;
+}
 
 #calculator-body {
   padding: 2rem;
   display: grid;
-  grid-template-columns: 4fr 4fr 4fr 4fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   background-color: rgb(7, 59, 59);
   border-radius: 1px 1px 20px 20px;
   

@@ -3,10 +3,14 @@ import { useState, useEffect } from 'react'
 import '../App.css'
 function Calculator() {
 
+  const [display, setDisplay] = useState("0")
+
+  /*
   const [number, setNumber] = useState(null)
   const [currentNumber, setCurrentNumber] = useState("")
   const [operator, setOperator] = useState(null)
-
+*/
+/*
   const calcData = [
     { id: "equals", label: "=", onClick: handleEquals },
     { id: "zero", label: "0", onClick: () => handleNumber("0") },
@@ -27,12 +31,27 @@ function Calculator() {
     { id: "decimal", label: ".", onClick: handleDecimal },
     { id: "clear", label: "clear", onClick: handleClear }
   ]
+*/
+  function handleNumber(e) {
+    const number = e.target.textContent
+    setDisplay(number)
+    if (display === "0") {
 
-  function handleNumber(number) {
-    setCurrentNumber(currentNumber + number)
+    } else {
+      setDisplay(display + number)
+    }
+    //setCurrentNumber(currentNumber + number)
+
   }
 
-  function handleOperator(operator) {
+
+
+  function handleOperator(e) {
+    const operator = e.target.textContent
+   
+    setDisplay(display + " " + operator + " ")
+
+    /*
     if (currentNumber !== "") {
       if (operator !== null) {
         calcResult()
@@ -47,8 +66,10 @@ function Calculator() {
     if (!currentNumber.includes(".")) {
       setCurrentNumber(currentNumber + ".")
     }
+    */
   }
 
+  /*
   function calcResult() {
     const current = parseFloat(currentNumber)
     let result = number
@@ -76,21 +97,36 @@ function Calculator() {
     }
     setNumber(result)
   }
+  */
 
   function handleEquals() {
+    setDisplay(eval(display)) //security issue 
+    /*
     if (operator && currentNumber !== "") {
       calcResult()
       setCurrentNumber("")
       setOperator(null)
     }
+    */
+  }
+
+  function handleDecimal() {
+    const numberArray = display.split(" ")
+    const lastElement = numberArray[numberArray.length - 1]
+    if (!lastElement.includes(".") && typeof parseInt(lastElement) === "number") {
+      setDisplay(display + ".") 
+    }
   }
 
   function handleClear() {
+    setDisplay("0")
+    /*
     setNumber(null)
     setCurrentNumber("")
     setOperator(null)
+    */
   }
-
+/*
   useEffect(() => {
     function handleKeyDown(e) {
       const key = e.key
@@ -118,24 +154,43 @@ function Calculator() {
     }
   }, [handleNumber, handleOperator, handleEquals])
 
-  
+  */
 
-//maybe add pictures for the button labels
-//display is where the numbers are shown
+//Do more design work and fix handleDecimal
   return (
     <div id="whole-calculator">
       <h1 id="title">Calculator App</h1>
      
-      <div id="display">{currentNumber || number}</div>
+      <div id="display" className="row" style={{ textAlign: "right" }}>{display}</div>
       <div id="calculator-body">
-        {calcData.map((item) => (
-            <button className="calc-buttons" key={item.id} id={item.id} onClick={item.onClick}>{item.label}</button> 
-        ))}
-        
+        <button id="clear" className="row" onClick={handleClear}>Clear</button>
+        <button id="seven" onClick={handleNumber}>7</button>
+        <button id="eight" onClick={handleNumber}>8</button>
+        <button id="nine" onClick={handleNumber}>9</button>
+        <button id="multiply" onClick={handleOperator}>*</button>
+        <button id="four" onClick={handleNumber}>4</button>
+        <button id="five" onClick={handleNumber}>5</button>
+        <button id="six" onClick={handleNumber}>6</button>
+        <button id="divide" onClick={handleOperator}>/</button>
+        <button id="one" onClick={handleNumber}>1</button>
+        <button id="two" onClick={handleNumber}>2</button>
+        <button id="three" onClick={handleNumber}>3</button>
+        <button id="add" onClick={handleOperator}>+</button>
+        <button id="zero" onClick={handleNumber}>0</button>
+        <button id="decimal" onClick={handleDecimal}>.</button>
+        <button id="equals" onClick={handleEquals}>=</button>
+        <button id="subtract" onClick={handleOperator}>-</button>     
       </div>
     </div>
   )
 
 }
+/*
+<div id="calculator-body">
+{calcData.map((item) => (
+    <button className="calc-buttons" key={item.id} id={item.id} onClick={item.onClick}>{item.label}</button> 
+))}
+</div>
+*/
 
 export default Calculator

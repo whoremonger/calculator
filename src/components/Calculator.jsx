@@ -3,13 +3,12 @@ import { useState, useEffect } from 'react'
 import '../App.css'
 function Calculator() {
 
-  const [display, setDisplay] = useState("0")
 
-  /*
-  const [number, setNumber] = useState(null)
-  const [currentNumber, setCurrentNumber] = useState("")
-  const [operator, setOperator] = useState(null)
-*/
+  const [result, setResult] = useState("")
+  const [expression, setExpression] = useState("")
+  const et = expression.trim()
+
+ 
 /*
   const calcData = [
     { id: "equals", label: "=", onClick: handleEquals },
@@ -32,165 +31,108 @@ function Calculator() {
     { id: "clear", label: "clear", onClick: handleClear }
   ]
 */
-  function handleNumber(e) {
-    const number = e.target.textContent
-    setDisplay(number)
-    if (display === "0") {
 
-    } else {
-      setDisplay(display + number)
-    }
-    //setCurrentNumber(currentNumber + number)
-
+  
+  function isOperator(symbol) {
+    return /[*/+-]/.test(symbol)
   }
 
 
+  function calculate() {
+    // if last char is an operator, do nothing
+    if (isOperator(et.charAt(et.length - 1))) return
+    // clean the expression so that two operators in a row uses the last operator
+    // 5 * - + 5 = 10
+    const parts = et.split(" ")
+    const newParts = []
 
-  function handleOperator(e) {
-    const operator = e.target.textContent
-   
-    setDisplay(display + " " + operator + " ")
-
-    /*
-    if (currentNumber !== "") {
-      if (operator !== null) {
-        calcResult()
+    // go through parts backwards
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (["*", "/", "+"].includes(parts[i]) && isOperator(parts[i - 1])) {
+        newParts.unshift(parts[i])
+        let j = 0;
+        let k = i - 1
+        while (isOperator(parts[k])) {
+          k--
+          j++
+        }
+        i -= j
       } else {
-        setNumber(parseFloat(currentNumber))
-      }
-      setCurrentNumber("")
-      setOperator(operator)
-    }
-  }
-  function handleDecimal() {
-    if (!currentNumber.includes(".")) {
-      setCurrentNumber(currentNumber + ".")
-    }
-    */
-  }
-
-  /*
-  function calcResult() {
-    const current = parseFloat(currentNumber)
-    let result = number
-    switch (operator) {
-      case "+":
-        result += current
-        break
-      case "-":
-        result -= current
-        break
-      case "x":
-        result *= current
-        break
-      case "/":
-        if (current !== 0) {
-          result /= current
-        } else {
-          alert("Error. Division by zero is not allowed!")
-          handleClear()
-          return
-        }
-        break
-      default:
-        break
-    }
-    setNumber(result)
-  }
-  */
-
-  function handleEquals() {
-    setDisplay(eval(display)) //security issue 
-    /*
-    if (operator && currentNumber !== "") {
-      calcResult()
-      setCurrentNumber("")
-      setOperator(null)
-    }
-    */
-  }
-
-  function handleDecimal() {
-    const numberArray = display.split(" ")
-    const lastElement = numberArray[numberArray.length - 1]
-    if (!lastElement.includes(".") && typeof parseInt(lastElement) === "number") {
-      setDisplay(display + ".") 
-    }
-  }
-
-  function handleClear() {
-    setDisplay("0")
-    /*
-    setNumber(null)
-    setCurrentNumber("")
-    setOperator(null)
-    */
-  }
-/*
-  useEffect(() => {
-    function handleKeyDown(e) {
-      const key = e.key
-      if (!isNaN(key) || key === "." || key === "+" || key === "-" || key === "x" || key === "/" || key === "=") {
-        e.preventDefault()
-        switch(key) {
-          case "+":
-          case "-":
-          case "x":
-          case "/":
-            handleOperator(key)
-            break
-          case "=":
-            handleEquals()
-            break
-          default:
-            handleNumber(key)
-            break  
-        }
+        newParts.unshift(parts[i])
       }
     }
-    document.addEventListener("keydown", handleKeyDown)
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown)
+    const newExpression = newParts.join(" ")
+    if (isOperator(newExpression.charAt(0))) {
+      setResult(eval(result + newExpression))
+    } else {
+      setResult(eval(newExpression))
     }
-  }, [handleNumber, handleOperator, handleEquals])
+    setExpression("")
+  }
 
-  */
-
-//Do more design work and fix handleDecimal
+  function buttonPress(symbol) {
+    if (symbol === "clear") {
+      setResult("")
+      setExpression("0")
+      
+    } else if (isOperator(symbol)) {
+      setExpression(et + " " + symbol + " ")
+    } else if (symbol === "=") {
+      calculate()
+    } else if (symbol === "0") {
+      if (expression.charAt(0) !== "0") {
+        setExpression(expression + symbol)
+      }
+    } else if (symbol === ".") {
+      // split by operators and get last number
+      const lastNumber = expression.split(/[-+/*]/g).pop()
+      if (!lastNumber) return
+      console.log("lastNumber :>> ", lastNumber)
+      // if last number already has a decimal, don't add another
+      if (lastNumber?.includes(".")) return
+      setExpression(expression + symbol)
+    } else {
+      if (expression.charAt(0) === "0") {
+        setExpression(expression.slice(1) + symbol)
+      } else {
+        setExpression(expression + symbol)
+      }
+    }
+  }
+  
+  
   return (
     <div id="whole-calculator">
       <h1 id="title">Calculator App</h1>
      
-      <div id="display" className="row" style={{ textAlign: "right" }}>{display}</div>
+      <div id="display" className="row" style={{ textAlign: "right" }}>
+        <div id="result">{result}</div>
+        <div id="expression">{expression}</div>
+      </div>
+
       <div id="calculator-body">
-        <button id="clear" className="row" onClick={handleClear}>Clear</button>
-        <button id="seven" onClick={handleNumber}>7</button>
-        <button id="eight" onClick={handleNumber}>8</button>
-        <button id="nine" onClick={handleNumber}>9</button>
-        <button id="multiply" onClick={handleOperator}>*</button>
-        <button id="four" onClick={handleNumber}>4</button>
-        <button id="five" onClick={handleNumber}>5</button>
-        <button id="six" onClick={handleNumber}>6</button>
-        <button id="divide" onClick={handleOperator}>/</button>
-        <button id="one" onClick={handleNumber}>1</button>
-        <button id="two" onClick={handleNumber}>2</button>
-        <button id="three" onClick={handleNumber}>3</button>
-        <button id="add" onClick={handleOperator}>+</button>
-        <button id="zero" onClick={handleNumber}>0</button>
-        <button id="decimal" onClick={handleDecimal}>.</button>
-        <button id="equals" onClick={handleEquals}>=</button>
-        <button id="subtract" onClick={handleOperator}>-</button>     
+        <button id="clear" className="row" onClick={() => buttonPress("clear")}>Clear</button>
+        <button id="seven" onClick={() => buttonPress("7")}>7</button>
+        <button id="eight" onClick={() => buttonPress("8")}>8</button>
+        <button id="nine" onClick={() => buttonPress("9")}>9</button>
+        <button id="multiply" onClick={() => buttonPress("*")}>*</button>
+        <button id="four" onClick={() => buttonPress("4")}>4</button>
+        <button id="five" onClick={() => buttonPress("5")}>5</button>
+        <button id="six" onClick={() => buttonPress("6")}>6</button>
+        <button id="divide" onClick={() => buttonPress("/")}>/</button>
+        <button id="one" onClick={() => buttonPress("1")}>1</button>
+        <button id="two" onClick={() => buttonPress("2")}>2</button>
+        <button id="three" onClick={() => buttonPress("3")}>3</button>
+        <button id="add" onClick={() => buttonPress("+")}>+</button>
+        <button id="zero" onClick={() => buttonPress("0")}>0</button>
+        <button id="decimal" onClick={() => buttonPress(".")}>.</button>
+        <button id="equals" onClick={() => buttonPress("=")}>=</button>
+        <button id="subtract" onClick={() => buttonPress("-")}>-</button>     
       </div>
     </div>
   )
 
 }
-/*
-<div id="calculator-body">
-{calcData.map((item) => (
-    <button className="calc-buttons" key={item.id} id={item.id} onClick={item.onClick}>{item.label}</button> 
-))}
-</div>
-*/
+
 
 export default Calculator

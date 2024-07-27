@@ -13,10 +13,10 @@
 }
 
 #display {
-  padding: 3rem;
+  padding: 2.5rem;
   background-color: lightslategray;
   font-size: 18pt;
-  border-radius: 1px 1px;
+  border-radius: 10px 10px;
 }
 .row {
   grid-column: 1 / -1;
@@ -37,4 +37,32 @@
   border: 1px solid black;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
   background-color: lightgray;
+}
+
+#clear {
+  background-color: orange;
+}
+
+#equals {
+  background-color: orange;
+}
+
+#divide {
+  background-color: gray;
+}
+
+#add {
+  background-color: gray;
+}
+
+#subtract {
+  background-color: gray;
+}
+
+#multiply {
+  background-color: gray;
+}
+
+#decimal {
+  background-color: gray;
 }

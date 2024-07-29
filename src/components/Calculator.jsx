@@ -39,14 +39,11 @@ function Calculator() {
 
 
   function calculate() {
-    // if last char is an operator, do nothing
+  
     if (isOperator(et.charAt(et.length - 1))) return
-    // clean the expression so that two operators in a row uses the last operator
-    // 5 * - + 5 = 10
     const parts = et.split(" ")
     const newParts = []
 
-    // go through parts backwards
     for (let i = parts.length - 1; i >= 0; i--) {
       if (["*", "/", "+"].includes(parts[i]) && isOperator(parts[i - 1])) {
         newParts.unshift(parts[i])
@@ -84,11 +81,11 @@ function Calculator() {
         setExpression(expression + symbol)
       }
     } else if (symbol === ".") {
-      // split by operators and get last number
+     
       const lastNumber = expression.split(/[-+/*]/g).pop()
       if (!lastNumber) return
       console.log("lastNumber :>> ", lastNumber)
-      // if last number already has a decimal, don't add another
+     
       if (lastNumber?.includes(".")) return
       setExpression(expression + symbol)
     } else {
